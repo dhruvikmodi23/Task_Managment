@@ -1,172 +1,164 @@
-"use client"
+"use client";
 
-import { useQuery } from "@tanstack/react-query"
-import { tasksAPI } from "../services/api"
-import { useAuth } from "../contexts/authContext"
-import { CheckSquare, Clock, TrendingUp } from "lucide-react"
-import LoadingSpinner from "../components/LoadingSpinner"
-import { format } from "date-fns"
+import { useQuery } from "@tanstack/react-query";
+import { tasksAPI } from "../services/api";
+import { useAuth } from "../contexts/authContext";
+import { CheckSquare, Clock, TrendingUp } from "lucide-react";
+import LoadingSpinner from "../components/LoadingSpinner";
+import { format } from "date-fns";
 
 const Dashboard = () => {
-  const { user } = useAuth()
+  const { user } = useAuth();
 
   const { data: tasksData, isLoading } = useQuery({
     queryKey: ["tasks", { limit: 10 }],
-    queryFn: () => tasksAPI.getTasks({ limit: 10, sortBy: "createdAt", sortOrder: "desc" }),
+    queryFn: () =>
+      tasksAPI.getTasks({ limit: 10, sortBy: "createdAt", sortOrder: "desc" }),
     select: (response) => response.data,
-  })
+  });
 
-  const tasks = tasksData?.tasks || []
+  const tasks = tasksData?.tasks || [];
 
-  // Calculate statistics
+  // Stats
   const stats = {
     total: tasks.length,
-    pending: tasks.filter((task) => task.status === "pending").length,
-    inProgress: tasks.filter((task) => task.status === "in-progress").length,
-    completed: tasks.filter((task) => task.status === "completed").length,
-  }
+    pending: tasks.filter((t) => t.status === "pending").length,
+    inProgress: tasks.filter((t) => t.status === "in-progress").length,
+    completed: tasks.filter((t) => t.status === "completed").length,
+  };
 
   const getStatusBadge = (status) => {
     const badges = {
-      pending: "badge-secondary",
-      "in-progress": "badge-warning",
-      completed: "badge-success",
-      cancelled: "badge-danger",
-    }
-    return badges[status] || "badge-secondary"
-  }
+      pending: "bg-yellow-100 text-yellow-800",
+      "in-progress": "bg-blue-100 text-blue-800",
+      completed: "bg-green-100 text-green-800",
+      cancelled: "bg-red-100 text-red-800",
+    };
+    return badges[status] || "bg-gray-100 text-gray-800";
+  };
 
   const getPriorityBadge = (priority) => {
     const badges = {
-      low: "badge-secondary",
-      medium: "badge-warning",
-      high: "badge-danger",
-      urgent: "badge-danger",
-    }
-    return badges[priority] || "badge-secondary"
-  }
+      low: "bg-gray-100 text-gray-800",
+      medium: "bg-yellow-100 text-yellow-800",
+      high: "bg-red-100 text-red-800",
+      urgent: "bg-red-200 text-red-900 font-semibold",
+    };
+    return badges[priority] || "bg-gray-100 text-gray-800";
+  };
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
         <LoadingSpinner size="lg" />
       </div>
-    )
+    );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Welcome Section */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h1 className="text-2xl font-bold text-gray-900">Welcome back, {user?.firstName}!</h1>
-        <p className="text-gray-600 mt-1">Here's what's happening with your tasks today.</p>
+      <div className="rounded-2xl shadow p-6" style={{backgroundColor: "rgba(231, 222, 205, 0.1)", border: "1px solid rgba(231, 222, 205, 0.2)"}}>
+        <h1 className="text-3xl font-bold" style={{color: "#E7DECD"}}>
+          Welcome back, {user?.firstName} 👋
+        </h1>
+        <p className="text-lg mt-2" style={{color: "rgba(231, 222, 205, 0.8)"}}>
+          Here's what's happening with your tasks today.
+        </p>
       </div>
 
-      {/* Statistics Cards */}
+      {/* Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="card">
-          <div className="card-content">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <CheckSquare className="h-8 w-8 text-primary-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">Total Tasks</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
-              </div>
-            </div>
+        <div className="shadow rounded-2xl p-6 flex items-center" style={{backgroundColor: "rgba(231, 222, 205, 0.1)", border: "1px solid rgba(231, 222, 205, 0.2)"}}>
+          <CheckSquare className="h-10 w-10" style={{color: "#E7DECD"}} />
+          <div className="ml-4">
+            <p className="text-lg font-medium" style={{color: "rgba(231, 222, 205, 0.8)"}}>Total Tasks</p>
+            <p className="text-3xl font-bold" style={{color: "#E7DECD"}}>{stats.total}</p>
           </div>
         </div>
 
-        <div className="card">
-          <div className="card-content">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <Clock className="h-8 w-8 text-yellow-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">Pending</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.pending}</p>
-              </div>
-            </div>
+        <div className="shadow rounded-2xl p-6 flex items-center" style={{backgroundColor: "rgba(231, 222, 205, 0.1)", border: "1px solid rgba(231, 222, 205, 0.2)"}}>
+          <Clock className="h-10 w-10" style={{color: "#E7DECD"}} />
+          <div className="ml-4">
+            <p className="text-lg font-medium" style={{color: "rgba(231, 222, 205, 0.8)"}}>Pending</p>
+            <p className="text-3xl font-bold" style={{color: "#E7DECD"}}>{stats.pending}</p>
           </div>
         </div>
 
-        <div className="card">
-          <div className="card-content">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <TrendingUp className="h-8 w-8 text-blue-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">In Progress</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.inProgress}</p>
-              </div>
-            </div>
+        <div className="shadow rounded-2xl p-6 flex items-center" style={{backgroundColor: "rgba(231, 222, 205, 0.1)", border: "1px solid rgba(231, 222, 205, 0.2)"}}>
+          <TrendingUp className="h-10 w-10" style={{color: "#E7DECD"}} />
+          <div className="ml-4">
+            <p className="text-lg font-medium" style={{color: "rgba(231, 222, 205, 0.8)"}}>In Progress</p>
+            <p className="text-3xl font-bold" style={{color: "#E7DECD"}}>{stats.inProgress}</p>
           </div>
         </div>
 
-        <div className="card">
-          <div className="card-content">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <CheckSquare className="h-8 w-8 text-green-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">Completed</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.completed}</p>
-              </div>
-            </div>
+        <div className="shadow rounded-2xl p-6 flex items-center" style={{backgroundColor: "rgba(231, 222, 205, 0.1)", border: "1px solid rgba(231, 222, 205, 0.2)"}}>
+          <CheckSquare className="h-10 w-10" style={{color: "#E7DECD"}} />
+          <div className="ml-4">
+            <p className="text-lg font-medium" style={{color: "rgba(231, 222, 205, 0.8)"}}>Completed</p>
+            <p className="text-3xl font-bold" style={{color: "#E7DECD"}}>{stats.completed}</p>
           </div>
         </div>
       </div>
 
       {/* Recent Tasks */}
-      <div className="card">
-        <div className="card-header">
-          <h3 className="text-lg font-medium text-gray-900">Recent Tasks</h3>
-          <p className="text-sm text-gray-500">Your latest task assignments</p>
-        </div>
-        <div className="card-content">
-          {tasks.length === 0 ? (
-            <div className="text-center py-8">
-              <CheckSquare className="mx-auto h-12 w-12 text-gray-400" />
-              <h3 className="mt-2 text-sm font-medium text-gray-900">No tasks yet</h3>
-              <p className="mt-1 text-sm text-gray-500">Get started by creating your first task.</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {tasks.slice(0, 5).map((task) => (
-                <div key={task._id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-                  <div className="flex-1">
-                    <h4 className="text-sm font-medium text-gray-900">{task.title}</h4>
-                    <p className="text-sm text-gray-500 mt-1">{task.description}</p>
-                    <div className="flex items-center space-x-2 mt-2">
-                      <span className={`badge ${getStatusBadge(task.status)}`}>{task.status.replace("-", " ")}</span>
-                      <span className={`badge ${getPriorityBadge(task.priority)}`}>{task.priority}</span>
-                      <span className="text-xs text-gray-500">
-                        Due: {format(new Date(task.dueDate), "MMM dd, yyyy")}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex-shrink-0">
-                    {task.assignedTo && (
-                      <div className="text-right">
-                        <p className="text-sm font-medium text-gray-900">
-                          {task.assignedTo.firstName} {task.assignedTo.lastName}
-                        </p>
-                        <p className="text-xs text-gray-500">{task.assignedTo.email}</p>
-                      </div>
-                    )}
+      <div className="shadow rounded-2xl p-6" style={{backgroundColor: "rgba(231, 222, 205, 0.1)", border: "1px solid rgba(231, 222, 205, 0.2)"}}>
+        <h2 className="text-2xl font-bold mb-6" style={{color: "#E7DECD"}}>Recent Tasks</h2>
+        <p className="mb-6" style={{color: "rgba(231, 222, 205, 0.8)"}}>Your latest task updates</p>
+
+        {tasks.length === 0 ? (
+          <div className="text-center py-12">
+            <CheckSquare className="mx-auto h-12 w-12" style={{color: "rgba(231, 222, 205, 0.4)"}} />
+            <h3 className="mt-4 text-lg font-medium" style={{color: "#E7DECD"}}>No tasks yet</h3>
+            <p className="mt-2" style={{color: "rgba(231, 222, 205, 0.7)"}}>Get started by creating your first task.</p>
+          </div>
+        ) : (
+          <div className="divide-y" style={{dividerColor: "rgba(231, 222, 205, 0.2)"}}>
+            {tasks.slice(0, 5).map((task) => (
+              <div
+                key={task._id}
+                className="py-4 flex justify-between items-center hover:bg-opacity-5 px-2 rounded-lg transition"
+                style={{hoverBackgroundColor: "rgba(231, 222, 205, 0.05)"}}
+              >
+                <div>
+                  <h4 className="text-lg font-semibold" style={{color: "#E7DECD"}}>{task.title}</h4>
+                  <p className="mt-1" style={{color: "rgba(231, 222, 205, 0.8)"}}>{task.description}</p>
+                  <div className="flex items-center space-x-2 mt-2">
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadge(
+                        task.status
+                      )}`}
+                    >
+                      {task.status.replace("-", " ")}
+                    </span>
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityBadge(
+                        task.priority
+                      )}`}
+                    >
+                      {task.priority}
+                    </span>
+                    <span className="text-sm" style={{color: "rgba(231, 222, 205, 0.7)"}}>
+                      Due: {format(new Date(task.dueDate), "MMM dd, yyyy")}
+                    </span>
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
+                {task.assignedTo && (
+                  <div className="text-right">
+                    <p className="text-md font-medium" style={{color: "#E7DECD"}}>
+                      {task.assignedTo.firstName} {task.assignedTo.lastName}
+                    </p>
+                    <p className="text-sm" style={{color: "rgba(231, 222, 205, 0.7)"}}>{task.assignedTo.email}</p>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Dashboard
+export default Dashboard;

@@ -10,7 +10,14 @@ const LoadingSpinner = ({ size = "md", className }) => {
   return (
     <div className={clsx("flex items-center justify-center", className)}>
       <div
-        className={clsx("animate-spin rounded-full border-2 border-gray-300 border-t-primary-600", sizeClasses[size])}
+        className={clsx(
+          "animate-spin rounded-full border-2 border-t-transparent", 
+          sizeClasses[size]
+        )}
+        style={{
+          borderColor: "rgba(231, 222, 205, 0.3)",
+          borderTopColor: "#E7DECD"
+        }}
       />
     </div>
   )
