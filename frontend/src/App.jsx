@@ -6,6 +6,11 @@ import Layout from "./components/Layout"
 import Login from "./pages/Login"
 import Register from "./pages/Register"
 import Dashboard from "./pages/Dashboard"
+import Tasks from "./pages/Tasks"
+import TaskDetail from "./pages/TaskDetail"
+import Users from "./pages/Users"
+import Profile from "./pages/Profile"
+import LoadingSpinner from "./components/LoadingSpinner"
 
 
 function App() {
@@ -29,6 +34,10 @@ function App() {
       <Route path="/" element={user ? <Layout /> : <Navigate to="/login" replace />}>
         <Route index element={<Navigate to="/dashboard" replace />} />
         <Route path="dashboard" element={<Dashboard />} />
+        <Route path="tasks" element={<Tasks />} />
+        <Route path="tasks/:id" element={<TaskDetail />} />
+        <Route path="profile" element={<Profile />} />
+        {user?.role === "admin" && <Route path="users" element={<Users />} />}
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />
