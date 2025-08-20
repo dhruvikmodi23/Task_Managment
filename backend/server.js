@@ -4,38 +4,40 @@ const cors = require("cors")
 const dotenv = require("dotenv")
 const path = require("path")
 
-
 const authRoutes = require("./routes/auth.routes")
 const userRoutes = require("./routes/users.route")
 const taskRoutes = require("./routes/tasks.route")
 const connectDB = require("./config/database")
 
-
 dotenv.config()
 
 const app = express()
 
-
+// Middleware
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-
+// Static folder for uploads
 app.use("/uploads", express.static(path.join(__dirname, "uploads")))
 
+// Connect to database
 connectDB()
 
-
+// Routes
 app.use("/api/auth", authRoutes)
 app.use("/api/users", userRoutes)
 app.use("/api/tasks", taskRoutes)
 
-
+// Health check
 app.get("/api/health", (req, res) => {
-  res.json({ message: "Task Manager API is running!", timestamp: new Date().toISOString() })
+  res.json({
+    message: "Task Manager API is running!",
+    timestamp: new Date().toISOString(),
+  })
 })
 
-
+// Error handler
 app.use((err, req, res, next) => {
   console.error(err.stack)
   res.status(500).json({
@@ -44,8 +46,8 @@ app.use((err, req, res, next) => {
   })
 })
 
-
-app.use("*", (req, res) => {
+// Catch-all for 404 (fixed)
+app.use((req, res) => {
   res.status(404).json({ message: "Route not found" })
 })
 

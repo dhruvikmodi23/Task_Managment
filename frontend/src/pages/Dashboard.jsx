@@ -1,6 +1,6 @@
 "use client"
 
-import { useQuery } from "react-query"
+import { useQuery } from "@tanstack/react-query"
 import { tasksAPI } from "../services/api"
 import { useAuth } from "../contexts/authContext"
 import { CheckSquare, Clock, TrendingUp } from "lucide-react"
@@ -10,13 +10,11 @@ import { format } from "date-fns"
 const Dashboard = () => {
   const { user } = useAuth()
 
-  const { data: tasksData, isLoading } = useQuery(
-    ["tasks", { limit: 10 }],
-    () => tasksAPI.getTasks({ limit: 10, sortBy: "createdAt", sortOrder: "desc" }),
-    {
-      select: (response) => response.data,
-    },
-  )
+  const { data: tasksData, isLoading } = useQuery({
+    queryKey: ["tasks", { limit: 10 }],
+    queryFn: () => tasksAPI.getTasks({ limit: 10, sortBy: "createdAt", sortOrder: "desc" }),
+    select: (response) => response.data,
+  })
 
   const tasks = tasksData?.tasks || []
 

@@ -1,6 +1,6 @@
 "use client"
 import { useParams, useNavigate, Link } from "react-router-dom"
-import { useQuery, useMutation, useQueryClient } from "react-query"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { tasksAPI } from "../services/api"
 import {
   ArrowLeft,
