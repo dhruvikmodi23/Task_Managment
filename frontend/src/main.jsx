@@ -8,6 +8,7 @@ import App from "./App.jsx"
 import "./index.css"
 import { AuthProvider } from "./contexts/authContext.jsx"
 
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -36,5 +37,5 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         </AuthProvider>
       </BrowserRouter>
     </QueryClientProvider>
-  </React.StrictMode>,
+  </React.StrictMode>
 )
